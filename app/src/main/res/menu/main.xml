@@ -11,6 +11,21 @@
         app:showAsAction="never"
         android:title="Wyczysc" />
     <item
+        android:id="@+id/Styl1"
+        app:showAsAction="never"
+        android:title="Styl 1"
+        />
+    <item
+        android:id="@+id/Styl2"
+        app:showAsAction="never"
+        android:title="Styl 2"
+        />
+    <item
+        android:id="@+id/Styl3"
+        app:showAsAction="never"
+        android:title="Styl 3"
+        />
+    <item
         android:id="@+id/undo_button"
         app:showAsAction="never"
         android:title="Cofnij" />

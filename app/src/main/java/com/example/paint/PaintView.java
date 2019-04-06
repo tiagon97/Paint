@@ -2,8 +2,11 @@ package com.example.paint;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
@@ -35,6 +38,10 @@ public class PaintView extends View {
     private int strokeWidth;
     private Bitmap mBitmap;
     private Canvas mCanvas;
+    private boolean emboss;
+    private boolean blur;
+    private MaskFilter mEmboss;
+    private MaskFilter mBlur;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     DrawOption drawOption;
 
@@ -69,6 +76,9 @@ public class PaintView extends View {
         mPaint.setXfermode(null);
         mPaint.setAlpha(0xff);
 
+        mEmboss=new EmbossMaskFilter(new float[] {1,1,1},0.4f,6,3.5f);
+        mBlur=new BlurMaskFilter(5,BlurMaskFilter.Blur.NORMAL);
+
     }
 
     public void initialise (DisplayMetrics displayMetrics) {
@@ -90,21 +100,28 @@ public class PaintView extends View {
 
         canvas.save();
         mCanvas.drawColor(backgroundColor);// WRONG
-            String drawOpt=drawOption.getDrawOpt();
-            if(drawOpt=="LINE"){ onDrawLine(mCanvas);}
-            if(drawOpt=="RECTANGLE"){ onDrawRectangle(mCanvas);}
-            if(drawOpt=="SQUARE"){ onDrawRectangle(mCanvas);}
-            if(isDrawing==false){mCanvas.drawColor(backgroundColor);}
+        String drawOpt=drawOption.getDrawOpt();
+        if(drawOpt=="LINE"){ onDrawLine(mCanvas);}
+        if(drawOpt=="RECTANGLE"){ onDrawRectangle(mCanvas);}
+        if(drawOpt=="SQUARE"){ onDrawRectangle(mCanvas);}
+        if(isDrawing==false){mCanvas.drawColor(backgroundColor);}
 
 
-                    for (Draw draw : paths) {
+        for (Draw draw : paths) {
 
-                        mPaint.setColor(draw.color); // WRONG
-                        mPaint.setStrokeWidth(draw.strokeWidth);
-                        mPaint.setMaskFilter(null);
 
-                        mCanvas.drawPath(draw.path, mPaint);
-                    }
+
+            mPaint.setColor(draw.color); // WRONG
+            mPaint.setStrokeWidth(draw.strokeWidth);
+            mPaint.setMaskFilter(null);
+
+            if(draw.emboss)
+                mPaint.setMaskFilter(mEmboss);
+            else if(draw.blur)
+                mPaint.setMaskFilter(mBlur);
+
+            mCanvas.drawPath(draw.path, mPaint);
+        }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
@@ -121,10 +138,10 @@ public class PaintView extends View {
     private void onDrawRectangle(Canvas canvas){
         if(drawOption.getDrawOpt()=="SQUARE"){adjustSquare(x,y);
         }
-         right = mStartX > x ? mStartX : x;
-         left = mStartX > x ? x : mStartX;
-         bottom = mStartY > y ? mStartY : y;
-         top = mStartY > y ? y : mStartY;
+        right = mStartX > x ? mStartX : x;
+        left = mStartX > x ? x : mStartX;
+        bottom = mStartY > y ? mStartY : y;
+        top = mStartY > y ? y : mStartY;
         canvas.drawRect(left, top , right, bottom, mPaint);
     }
 
@@ -167,7 +184,7 @@ public class PaintView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(drawOption.getDrawOpt()=="SQUARE"){adjustSquare(x,y);
-                     }
+                }
                 touchMoveRect(x,y);
                 invalidate();
                 break;
@@ -180,6 +197,24 @@ public class PaintView extends View {
                 break;
         }
         ;
+    }
+
+    public void normal(){
+        emboss=false;
+        blur=false;
+
+    }
+
+    public void blur(){
+        emboss=false;
+        blur=true;
+
+    }
+
+    public void emboss(){
+        emboss=true;
+        blur=false;
+
     }
 
     private void onTouchEventBrush(MotionEvent event){
@@ -213,7 +248,7 @@ public class PaintView extends View {
 
     private void touchStart (float x, float y) {
         mPath = new Path();
-        Draw draw = new Draw(currentColor, strokeWidth, mPath);
+        Draw draw = new Draw(currentColor, strokeWidth, mPath,emboss,blur);
         paths.add(draw);
         mPath.reset();
         mPath.moveTo(x, y);
@@ -270,6 +305,7 @@ public class PaintView extends View {
         backgroundColor = DEFAULT_BG_COLOR;
         mCanvas.drawColor(backgroundColor);
         paths.clear();
+        normal();
         invalidate();
 
     }
@@ -285,6 +321,9 @@ public class PaintView extends View {
         currentColor = color;
 
     }
+
+
+
 
     public void saveImage () {
 

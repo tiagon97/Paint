@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 paintView.saveImage();
                 return true;
+
             case R.id.undo_button:
                 paintView.undo();
                 return true;
@@ -177,8 +178,17 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_rect:
                 paintView.drawOption.setRect_active();
                 return true;
-                case R.id.action_square:
+            case R.id.action_square:
                 paintView.drawOption.setSquare_active();
+                return true;
+            case R.id.Styl1:
+                paintView.normal();
+                return true;
+            case R.id.Styl2:
+                paintView.emboss();
+                return true;
+            case R.id.Styl3:
+                paintView.blur();
                 return true;
         }
 
@@ -208,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        ambilWarnaDialog.show(); 
+        ambilWarnaDialog.show();
 
     }
 }
