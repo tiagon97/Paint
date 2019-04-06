@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/save_button"
+        app:showAsAction="never"
+        android:title="Zapisz" />
+    <item
+        android:id="@+id/clear_button"
+        app:showAsAction="never"
+        android:title="Wyczysc" />
+    <item
+        android:id="@+id/undo_button"
+        app:showAsAction="never"
+        android:title="Cofnij" />
+    <item
+        android:id="@+id/redo_button"
+        app:showAsAction="never"
+        android:title="Przywróć" />
+    <item
+        android:id="@+id/brush_button"
+        app:showAsAction="never"
+        android:title="Pedzel"/>
+    <item
+        android:id="@+id/action_line"
+        app:showAsAction="never"
+        android:title="Rysuj linie"/>
+    <item
+        android:id="@+id/action_rect"
+        app:showAsAction="never"
+        android:title="Rysuj prostokat"/>
+    <item
+        android:id="@+id/action_square"
+        app:showAsAction="never"
+        android:title="Rysuj kwadrat"/>
+
+
+
+</menu>
