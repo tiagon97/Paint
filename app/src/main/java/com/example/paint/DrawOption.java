@@ -20,6 +20,7 @@ public class DrawOption {
     public void setSquare_active(){
         this.drawOpt="SQUARE";
     }
+    public void setCircle_active(){ this.drawOpt="CIRCLE"; }
 
     public String getDrawOpt() {
         return drawOpt;

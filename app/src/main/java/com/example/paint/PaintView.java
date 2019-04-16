@@ -40,6 +40,7 @@ public class PaintView extends View {
     private Canvas mCanvas;
     private boolean emboss;
     private boolean blur;
+    private boolean fill;
     private MaskFilter mEmboss;
     private MaskFilter mBlur;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -70,7 +71,7 @@ public class PaintView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
         mPaint.setColor(DEFAULT_COLOR);
-        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setXfermode(null);
@@ -100,17 +101,7 @@ public class PaintView extends View {
 
         canvas.save();
         mCanvas.drawColor(backgroundColor);// WRONG
-        String drawOpt=drawOption.getDrawOpt();
-        if(drawOpt=="LINE"){ onDrawLine(mCanvas);}
-        if(drawOpt=="RECTANGLE"){ onDrawRectangle(mCanvas);}
-        if(drawOpt=="SQUARE"){ onDrawRectangle(mCanvas);}
-        if(isDrawing==false){mCanvas.drawColor(backgroundColor);}
-
-
         for (Draw draw : paths) {
-
-
-
             mPaint.setColor(draw.color); // WRONG
             mPaint.setStrokeWidth(draw.strokeWidth);
             mPaint.setMaskFilter(null);
@@ -119,9 +110,39 @@ public class PaintView extends View {
                 mPaint.setMaskFilter(mEmboss);
             else if(draw.blur)
                 mPaint.setMaskFilter(mBlur);
-
+            if(draw.fill)
+                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            else
+                mPaint.setStyle(Paint.Style.STROKE);
             mCanvas.drawPath(draw.path, mPaint);
         }
+        String drawOpt=drawOption.getDrawOpt();
+        if(drawOpt=="LINE"){ onDrawLine(mCanvas);}
+        if(drawOpt=="RECTANGLE"){ onDrawRectangle(mCanvas);}
+        if(drawOpt=="SQUARE"){ onDrawRectangle(mCanvas);}
+        if(drawOpt=="CIRCLE"){ onDrawCircle(mCanvas);}
+        if(isDrawing==false){
+            mCanvas.drawColor(backgroundColor);
+            for (Draw draw : paths) {
+                mPaint.setColor(draw.color); // WRONG
+                mPaint.setStrokeWidth(draw.strokeWidth);
+                mPaint.setMaskFilter(null);
+
+                if(draw.emboss)
+                    mPaint.setMaskFilter(mEmboss);
+                else if(draw.blur)
+                    mPaint.setMaskFilter(mBlur);
+                if(draw.fill)
+                    mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                else
+                    mPaint.setStyle(Paint.Style.STROKE);
+
+                mCanvas.drawPath(draw.path, mPaint);
+            }
+        }
+
+
+
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
@@ -133,6 +154,36 @@ public class PaintView extends View {
         float dy = Math.abs(y - mStartY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
             canvas.drawLine(mStartX, mStartY, x, y, mPaint);
+        }
+    }
+    private void onDrawCircle(Canvas canvas){
+        canvas.drawCircle(mStartX, mStartY, calculateRadius(mStartX, mStartY, x, y), mPaint);
+    }
+    protected float calculateRadius(float x1, float y1, float x2, float y2) {
+
+        return (float) Math.sqrt(
+                Math.pow(x1 - x2, 2) +
+                        Math.pow(y1 - y2, 2)
+        );
+    }
+    private void onTouchEventCircle(MotionEvent event){
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isDrawing=true;
+                mStartX=x;
+                mStartY=y;
+                touchStart(x,y);
+                invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+                isDrawing=false;
+                touchUpCircle();
+                invalidate();
+                break;
+
         }
     }
     private void onDrawRectangle(Canvas canvas){
@@ -216,6 +267,13 @@ public class PaintView extends View {
         blur=false;
 
     }
+    public void setStyle(){
+        if(mPaint.getStyle()== Paint.Style.STROKE){
+            fill=true;
+        }else{
+            fill=false;
+        }
+    }
 
     private void onTouchEventBrush(MotionEvent event){
         switch (event.getAction()){
@@ -245,10 +303,12 @@ public class PaintView extends View {
     private void touchUpRect(){
         mPath.addRect(left,top,right,bottom, Path.Direction.CW);
     }
-
+    private void touchUpCircle(){
+        mPath.addCircle(mX,mY,calculateRadius(mX,mY,x,y), Path.Direction.CCW);
+    }
     private void touchStart (float x, float y) {
         mPath = new Path();
-        Draw draw = new Draw(currentColor, strokeWidth, mPath,emboss,blur);
+        Draw draw = new Draw(currentColor, strokeWidth, mPath,emboss,blur,fill);
         paths.add(draw);
         mPath.reset();
         mPath.moveTo(x, y);
@@ -296,6 +356,9 @@ public class PaintView extends View {
                 break;
             case "SQUARE":
                 onTouchEventRectangle(event);
+                break;
+            case "CIRCLE":
+                onTouchEventCircle(event);
                 break;
         }
         return true;

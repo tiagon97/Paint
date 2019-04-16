@@ -49,6 +49,14 @@
         android:id="@+id/action_square"
         app:showAsAction="never"
         android:title="Rysuj kwadrat"/>
+    <item
+        android:id="@+id/action_circle"
+        app:showAsAction="never"
+        android:title="Rysuj okrąg"/>
+    <item
+        android:id="@+id/action_style"
+        app:showAsAction="never"
+        android:title="Wypelnienie/brak wypelnienia"/>
 
 
 

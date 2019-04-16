@@ -181,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_square:
                 paintView.drawOption.setSquare_active();
                 return true;
+            case R.id.action_circle:
+                paintView.drawOption.setCircle_active();
+                return true;
             case R.id.Styl1:
                 paintView.normal();
                 return true;
@@ -189,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.Styl3:
                 paintView.blur();
+                return true;
+            case R.id.action_style:
+                paintView.setStyle();
                 return true;
         }
 
