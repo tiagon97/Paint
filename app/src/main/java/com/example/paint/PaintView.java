@@ -41,6 +41,7 @@ public class PaintView extends View {
     private boolean emboss;
     private boolean blur;
     private boolean fill;
+    private boolean changed=false;
     private MaskFilter mEmboss;
     private MaskFilter mBlur;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -278,11 +279,19 @@ public class PaintView extends View {
     private void onTouchEventBrush(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                if(fill==true){
+                    fill=false;
+                    changed=true;
+                }
                 touchStart(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
                 touchUp();
+                if(changed==true){
+                    fill=true;
+                    changed=false;
+                }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
