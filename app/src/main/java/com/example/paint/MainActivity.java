@@ -96,6 +96,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this, "Cofnięto", Toast.LENGTH_LONG).show();
                 break;
             }
+            case R.id.RedoButton:{
+                paintView.redo();
+                Toast.makeText(MainActivity.this, "Przywrócono", Toast.LENGTH_LONG).show();
+                break;
+            }
+
         }
     }
 
