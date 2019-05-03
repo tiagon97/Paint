@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.ClearButton:{
                 paintView.clear();
+                Toast.makeText(MainActivity.this, "Wyczyszczono", Toast.LENGTH_LONG).show();
+                break;
+            }
+            case R.id.UndoButton:{
+                paintView.undo();
+                Toast.makeText(MainActivity.this, "Cofnięto", Toast.LENGTH_LONG).show();
                 break;
             }
         }
