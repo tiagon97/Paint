@@ -15,12 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private PaintView paintView;
     private int defaultColor;
@@ -78,7 +79,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton clear = findViewById(R.id.ClearButton);
+        clear.setOnClickListener(this);
     }
+
+    @Override
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.ClearButton:{
+                paintView.clear();
+                break;
+            }
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
