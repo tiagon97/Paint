@@ -10,7 +10,6 @@ public class DrawOption {
     public void setBrush_active() {
         this.drawOpt="BRUSH";
     }
-
     public void setLine_active() {
         this.drawOpt="LINE";
     }

@@ -46,6 +46,7 @@ public class PaintView extends View {
     private MaskFilter mBlur;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     DrawOption drawOption;
+    public boolean isTouch;
 
 
     protected float mStartX;
@@ -279,6 +280,7 @@ public class PaintView extends View {
     private void onTouchEventBrush(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                isDrawing = true;
                 if(fill==true){
                     fill=false;
                     changed=true;
@@ -288,6 +290,7 @@ public class PaintView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 touchUp();
+                isDrawing = false;
                 if(changed==true){
                     fill=true;
                     changed=false;
@@ -353,6 +356,7 @@ public class PaintView extends View {
         x = event.getX();
         y = event.getY();
         String drawOpt=drawOption.getDrawOpt();
+        isTouch=true;
         switch (drawOpt) {
             case "LINE":
                 onTouchEventLine(event);
@@ -370,13 +374,16 @@ public class PaintView extends View {
                 onTouchEventCircle(event);
                 break;
         }
+        isTouch=false;
         return true;
+
     }
     public void clear () {
 
         backgroundColor = DEFAULT_BG_COLOR;
         mCanvas.drawColor(backgroundColor);
         paths.clear();
+        undo.clear();
         normal();
         invalidate();
 

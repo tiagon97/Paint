@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
+    ImageButton viewBrushOption,brush,line,rect,square,circle;
+    boolean visibility=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button button;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         paintView = findViewById(R.id.paintView);
         button = findViewById(R.id.change_color_button);
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -78,11 +80,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
-        ImageButton clear = findViewById(R.id.ClearButton);
-        clear.setOnClickListener(this);
+        if(visibility){
+            if(paintView.isTouch){
+                noVisibility();
+            }
+        }
+        viewBrushOption = findViewById(R.id.viewBrushOption);
+        brush=findViewById(R.id.brush_btn);
+        line=findViewById(R.id.line_btn);
+        rect=findViewById(R.id.rect_btn);
+        square=findViewById(R.id.square_btn);
+        circle=findViewById(R.id.circle_btn);
+        View viewVisibility=findViewById(R.id.paintView);
+        viewVisibility.setOnClickListener(this);
     }
-
+    public void setVisibility(){
+        brush.setVisibility(View.VISIBLE);
+        circle.setVisibility(View.VISIBLE);
+        line.setVisibility(View.VISIBLE);
+        rect.setVisibility(View.VISIBLE);
+        square.setVisibility(View.VISIBLE);
+    }
+    public void setActive(){
+        visibility=true;
+        switch (paintView.drawOption.getDrawOpt()){
+            case "BRUSH":{
+                circle.setImageResource(R.drawable.circle);
+                brush.setImageResource(R.drawable.brush_used);
+                line.setImageResource(R.drawable.line);
+                rect.setImageResource(R.drawable.rectangle);
+                square.setImageResource(R.drawable.square);
+                break;
+            }
+            case "LINE":{
+                circle.setImageResource(R.drawable.circle);
+                brush.setImageResource(R.drawable.brush);
+                line.setImageResource(R.drawable.line_used);
+                rect.setImageResource(R.drawable.rectangle);
+                square.setImageResource(R.drawable.square);
+                break;
+            }
+            case "RECTANGLE":{
+                circle.setImageResource(R.drawable.circle);
+                brush.setImageResource(R.drawable.brush);
+                line.setImageResource(R.drawable.line);
+                rect.setImageResource(R.drawable.rectangle_used);
+                square.setImageResource(R.drawable.square);
+                break;
+            }
+            case "SQUARE":{
+                circle.setImageResource(R.drawable.circle);
+                brush.setImageResource(R.drawable.brush);
+                line.setImageResource(R.drawable.line);
+                rect.setImageResource(R.drawable.rectangle);
+                square.setImageResource(R.drawable.square_used);
+                break;
+            }
+            case "CIRCLE":{
+                circle.setImageResource(R.drawable.circle_used);
+                brush.setImageResource(R.drawable.brush);
+                line.setImageResource(R.drawable.line);
+                rect.setImageResource(R.drawable.rectangle);
+                square.setImageResource(R.drawable.square);
+                break;
+            }
+        }
+    }
+    public void noVisibility(){
+        brush.setVisibility(View.GONE);
+        line.setVisibility(View.GONE);
+        rect.setVisibility(View.GONE);
+        square.setVisibility(View.GONE);
+        circle.setVisibility(View.GONE);
+        visibility=false;
+    }
     @Override
     public void onClick(View v){
         switch (v.getId()){
@@ -99,6 +170,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.RedoButton:{
                 paintView.redo();
                 Toast.makeText(MainActivity.this, "Przywrócono", Toast.LENGTH_LONG).show();
+                break;
+            }
+            case R.id.viewBrushOption:{
+                if(visibility==false){
+                    setVisibility();
+                    setActive(); }
+                else{
+                    noVisibility(); }
+                break;
+            }
+            case R.id.brush_btn:{
+                paintView.drawOption.setBrush_active();
+                viewBrushOption.setImageResource(R.drawable.brush_used);
+                noVisibility();
+                break;
+            }
+            case R.id.line_btn:{
+                paintView.drawOption.setLine_active();
+                viewBrushOption.setImageResource(R.drawable.line_used);
+                noVisibility();
+                break;
+            }
+            case R.id.rect_btn:{
+                paintView.drawOption.setRect_active();
+                viewBrushOption.setImageResource(R.drawable.rectangle_used);
+                noVisibility();
+                break;
+            }
+            case R.id.square_btn:{
+                paintView.drawOption.setSquare_active();
+                viewBrushOption.setImageResource(R.drawable.square_used);
+                noVisibility();
+                break;
+            }
+            case R.id.circle_btn:{
+                paintView.drawOption.setCircle_active();
+                viewBrushOption.setImageResource(R.drawable.circle_used);
+                noVisibility();
                 break;
             }
 
