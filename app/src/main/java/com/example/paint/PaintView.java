@@ -40,7 +40,7 @@ public class PaintView extends View {
     private Canvas mCanvas;
     private boolean emboss;
     private boolean blur;
-    private boolean fill;
+    public boolean fill=false;
     private boolean changed=false;
     private MaskFilter mEmboss;
     private MaskFilter mBlur;

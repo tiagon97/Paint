@@ -3,6 +3,7 @@ package com.example.paint;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
-    ImageButton viewBrushOption,brush,line,rect,square,circle;
+    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn;
     boolean visibility=false;
 
     @Override
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rect=findViewById(R.id.rect_btn);
         square=findViewById(R.id.square_btn);
         circle=findViewById(R.id.circle_btn);
+        fillbtn=findViewById(R.id.fillButton);
         View viewVisibility=findViewById(R.id.paintView);
         viewVisibility.setOnClickListener(this);
     }
@@ -170,6 +172,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.RedoButton:{
                 paintView.redo();
                 Toast.makeText(MainActivity.this, "Przywrócono", Toast.LENGTH_LONG).show();
+                break;
+            }
+            case R.id.fillButton:{
+                if(paintView.fill){
+                    fillbtn.setImageResource(R.drawable.no_fill);
+                    paintView.setStyle();
+                }else{
+                    fillbtn.setImageResource(R.drawable.fill);
+                    paintView.setStyle();
+                }
                 break;
             }
             case R.id.viewBrushOption:{
