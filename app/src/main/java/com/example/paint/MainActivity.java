@@ -16,9 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -31,10 +34,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int seekBarProgress=0;
     ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn;
     boolean visibility=false;
+    String[] style = {"Zwykly", "Blur", "Emboss"};
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        getSupportActionBar().hide();
         Button button;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -60,6 +66,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         });
+
+        Spinner sp;
+        sp = findViewById(R.id.spinner);
+        adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, style);
+        sp.setAdapter(adapter);
+
+
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l){
+                //  ((TextView)view).setText("null"); do ukrycia nazwa
+                switch (i){
+                    case 0:
+                        paintView.normal();
+                        break;
+                    case 1:
+                        paintView.blur();
+                        break;
+                    case 2:
+                        paintView.emboss();
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+
+            }
+        });
+
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
