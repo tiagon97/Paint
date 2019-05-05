@@ -175,13 +175,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.fillButton:{
+                if(paintView.drawOption.getDrawOpt()!="BRUSH"){
                 if(paintView.fill){
                     fillbtn.setImageResource(R.drawable.no_fill);
                     paintView.setStyle();
                 }else{
                     fillbtn.setImageResource(R.drawable.fill);
                     paintView.setStyle();
-                }
+                }}
                 break;
             }
             case R.id.viewBrushOption:{
