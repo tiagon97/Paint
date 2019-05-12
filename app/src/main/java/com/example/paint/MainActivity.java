@@ -32,10 +32,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
-    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn;
+    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear;
     boolean visibility=false;
     String[] style = {"Zwykly", "Blur", "Emboss"};
     ArrayAdapter<String> adapter;
+    Spinner sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +68,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         });
 
-        Spinner sp;
+
         sp = findViewById(R.id.spinner);
         adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, style);
         sp.setAdapter(adapter);
+
+        paintView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        hideUI();
+
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        showUI();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
 
 
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -122,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 noVisibility();
             }
         }
+
+
+
+
         viewBrushOption = findViewById(R.id.viewBrushOption);
         brush=findViewById(R.id.brush_btn);
         line=findViewById(R.id.line_btn);
@@ -129,9 +152,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         square=findViewById(R.id.square_btn);
         circle=findViewById(R.id.circle_btn);
         fillbtn=findViewById(R.id.fillButton);
+        redo=findViewById(R.id.RedoButton);
+        undo=findViewById(R.id.UndoButton);
+        clear=findViewById(R.id.ClearButton);
         View viewVisibility=findViewById(R.id.paintView);
         viewVisibility.setOnClickListener(this);
     }
+
+    public void hideUI()
+    {
+        viewBrushOption.setVisibility(View.GONE);
+        fillbtn.setVisibility(View.GONE);
+        redo.setVisibility(View.GONE);
+        undo.setVisibility(View.GONE);
+        sp.setVisibility(View.GONE);
+        clear.setVisibility(View.GONE);
+    }
+
+    public void showUI()
+    {
+        viewBrushOption.setVisibility(View.VISIBLE);
+        fillbtn.setVisibility(View.VISIBLE);
+        redo.setVisibility(View.VISIBLE);
+        undo.setVisibility(View.VISIBLE);
+        sp.setVisibility(View.VISIBLE);
+        clear.setVisibility(View.VISIBLE);
+    }
+
+
+
     public void setVisibility(){
         brush.setVisibility(View.VISIBLE);
         circle.setVisibility(View.VISIBLE);
