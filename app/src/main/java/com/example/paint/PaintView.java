@@ -355,6 +355,9 @@ public class PaintView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         x = event.getX();
         y = event.getY();
+        if(undo.size()>0){
+            undo.clear();
+        }
         String drawOpt=drawOption.getDrawOpt();
         isTouch=true;
         switch (drawOpt) {
