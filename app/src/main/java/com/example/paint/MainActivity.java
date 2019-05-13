@@ -1,6 +1,7 @@
 package com.example.paint;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.Image;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayAdapter<String> adapter;
     Spinner sp;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l){
-                //  ((TextView)view).setText("null"); do ukrycia nazwa
+                  ((TextView)view).setText("");
                 switch (i){
                     case 0:
                         paintView.normal();
@@ -245,18 +247,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v){
         switch (v.getId()){
             case R.id.ClearButton:{
-                paintView.clear();
-                Toast.makeText(MainActivity.this, "Wyczyszczono", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Czy na pewno chcesz wyczyścić ekran?")
+                        .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                paintView.clear();
+                            }
+                        })
+                        .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
+
                 break;
             }
             case R.id.UndoButton:{
                 paintView.undo();
-                Toast.makeText(MainActivity.this, "Cofnięto", Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.RedoButton:{
                 paintView.redo();
-                Toast.makeText(MainActivity.this, "Przywrócono", Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.fillButton:{

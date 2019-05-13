@@ -467,10 +467,11 @@ public class PaintView extends View {
 
             undo.add(paths.remove(paths.size() - 1));
             invalidate();
+            Toast.makeText(getContext(), "Cofnięto.", Toast.LENGTH_SHORT).show();
 
         } else {
 
-            Toast.makeText(getContext(), "Nie można nic cofnąć.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Nie można nic cofnąć.", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -480,11 +481,12 @@ public class PaintView extends View {
         if (undo.size() > 0) {
 
             paths.add(undo.remove(undo.size() - 1));
+            Toast.makeText(getContext(), "Przywrócono", Toast.LENGTH_SHORT).show();
             invalidate(); // add
 
         } else {
 
-            Toast.makeText(getContext(), "Nie można przywrócić", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Brak ścieżek do przywrócenia", Toast.LENGTH_SHORT).show();
 
         }
     }
