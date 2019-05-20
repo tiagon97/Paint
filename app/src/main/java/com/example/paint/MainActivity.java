@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -22,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,12 +41,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
+    int width,height;
     ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery,colour,pen_size;
     TextView text;
     boolean visibility=false;
     String[] style = {"Zwykly", "Blur", "Emboss"};
     ArrayAdapter<String> adapter;
     Spinner sp;
+    class MyGlobalListenerClass implements ViewTreeObserver.OnGlobalLayoutListener {
+        @Override
+        public void onGlobalLayout() {
+            View v = (View) findViewById(R.id.paintView);
+            width = v.getWidth();
+            height = v.getHeight();
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -61,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final SeekBar seekBar = findViewById(R.id.seekBar);
         final TextView textView = findViewById(R.id.current_pen_size);
         seekBar.setVisibility(View.GONE);
+        paintView.getViewTreeObserver().addOnGlobalLayoutListener(new MyGlobalListenerClass());
 
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
@@ -377,6 +389,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        if((height>newHeight)|| (width>newWidth)) {
+            float scaleWidth = ((float) newWidth) / width;
+            float scaleHeight = ((float) newHeight) / height;
+            // CREATE A MATRIX FOR THE MANIPULATION
+            Matrix matrix = new Matrix();
+            // RESIZE THE BIT MAP
+            if ((newWidth < width) && (newHeight > height)) {
+                matrix.postScale(scaleWidth, scaleWidth);
+            } else if ((newHeight < height) && (newWidth > width)) {
+                matrix.postScale(scaleHeight, scaleHeight);
+            } else if ((newHeight < height) && (newWidth < width)) {
+                if (scaleHeight < scaleWidth) {
+                    matrix.postScale(scaleHeight, scaleHeight);
+                } else {
+                    matrix.postScale(scaleWidth, scaleWidth);
+                }
+            }
+
+            // "RECREATE" THE NEW BITMAP
+            Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+            bm.recycle();
+            return resizedBitmap;
+        }else return bm;
+    }
 
     private void pickFromGallery(){
         //Create an Intent with action as ACTION_PICK
@@ -398,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (photoUri != null) {
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                    currentImage=getResizedBitmap(currentImage,width,height);
                     paintView.setBackgroundImg(currentImage);
                 } catch (Exception e) {
                     e.printStackTrace();

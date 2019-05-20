@@ -106,7 +106,7 @@ public class PaintView extends View {
         canvas.save();
         mCanvas.drawColor(backgroundColor);
         if(bgImage) {
-            mCanvas.drawBitmap(backgroundImg, 150, 200, mPaint);
+            mCanvas.drawBitmap(backgroundImg, 0, 150, mPaint);
         }
 
         for (Draw draw : paths) {
@@ -132,7 +132,7 @@ public class PaintView extends View {
         if(isDrawing==false){
                 mCanvas.drawColor(backgroundColor);
                 if(bgImage){
-                mCanvas.drawBitmap(backgroundImg,150,200,mPaint);
+                mCanvas.drawBitmap(backgroundImg,0,150,mPaint);
                 }
             for (Draw draw : paths) {
                 mPaint.setColor(draw.color); // WRONG
