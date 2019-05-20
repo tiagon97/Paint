@@ -35,6 +35,7 @@ public class PaintView extends View {
     private Paint mPaint;
     private int currentColor;
     private int backgroundColor = DEFAULT_BG_COLOR;
+    private Bitmap backgroundImg;
     private int strokeWidth;
     private Bitmap mBitmap;
     private Canvas mCanvas;
@@ -47,6 +48,7 @@ public class PaintView extends View {
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     DrawOption drawOption;
     public boolean isTouch;
+    public boolean bgImage=false;
 
 
     protected float mStartX;
@@ -102,7 +104,11 @@ public class PaintView extends View {
     protected void onDraw(Canvas canvas) {
 
         canvas.save();
-        mCanvas.drawColor(backgroundColor);// WRONG
+        mCanvas.drawColor(backgroundColor);
+        if(bgImage) {
+            mCanvas.drawBitmap(backgroundImg, 150, 200, mPaint);
+        }
+
         for (Draw draw : paths) {
             mPaint.setColor(draw.color); // WRONG
             mPaint.setStrokeWidth(draw.strokeWidth);
@@ -124,7 +130,10 @@ public class PaintView extends View {
         if(drawOpt=="SQUARE"){ onDrawRectangle(mCanvas);}
         if(drawOpt=="CIRCLE"){ onDrawCircle(mCanvas);}
         if(isDrawing==false){
-            mCanvas.drawColor(backgroundColor);
+                mCanvas.drawColor(backgroundColor);
+                if(bgImage){
+                mCanvas.drawBitmap(backgroundImg,150,200,mPaint);
+                }
             for (Draw draw : paths) {
                 mPaint.setColor(draw.color); // WRONG
                 mPaint.setStrokeWidth(draw.strokeWidth);
@@ -157,6 +166,10 @@ public class PaintView extends View {
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
             canvas.drawLine(mStartX, mStartY, x, y, mPaint);
         }
+    }
+    public void setBackgroundImg(Bitmap image){
+        bgImage=true;
+        backgroundImg=image;
     }
     private void onDrawCircle(Canvas canvas){
         canvas.drawCircle(mStartX, mStartY, calculateRadius(mStartX, mStartY, x, y), mPaint);
@@ -269,7 +282,7 @@ public class PaintView extends View {
         blur=false;
 
     }
-    public void setStyle(){
+    public void setFill(){
         if(mPaint.getStyle()== Paint.Style.STROKE){
             fill=true;
         }else{
@@ -385,6 +398,7 @@ public class PaintView extends View {
 
         backgroundColor = DEFAULT_BG_COLOR;
         mCanvas.drawColor(backgroundColor);
+        bgImage=false;
         paths.clear();
         undo.clear();
         normal();

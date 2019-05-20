@@ -2,9 +2,14 @@ package com.example.paint;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,12 +33,13 @@ import android.widget.Toast;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+    private static final int REQUEST_CODE = 1;
+    private Bitmap currentImage;
     private PaintView paintView;
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
-    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear;
+    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery;
     boolean visibility=false;
     String[] style = {"Zwykly", "Blur", "Emboss"};
     ArrayAdapter<String> adapter;
@@ -157,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         redo=findViewById(R.id.RedoButton);
         undo=findViewById(R.id.UndoButton);
         clear=findViewById(R.id.ClearButton);
+        gallery=findViewById(R.id.galleryButton);
         View viewVisibility=findViewById(R.id.paintView);
         viewVisibility.setOnClickListener(this);
     }
@@ -169,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         undo.setVisibility(View.GONE);
         sp.setVisibility(View.GONE);
         clear.setVisibility(View.GONE);
+        gallery.setVisibility(View.GONE);
     }
 
     public void showUI()
@@ -179,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         undo.setVisibility(View.VISIBLE);
         sp.setVisibility(View.VISIBLE);
         clear.setVisibility(View.VISIBLE);
+        gallery.setVisibility(View.VISIBLE);
     }
 
 
@@ -278,10 +287,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(paintView.drawOption.getDrawOpt()!="BRUSH"){
                 if(paintView.fill){
                     fillbtn.setImageResource(R.drawable.no_fill);
-                    paintView.setStyle();
+                    paintView.setFill();
                 }else{
                     fillbtn.setImageResource(R.drawable.fill);
-                    paintView.setStyle();
+                    paintView.setFill();
                 }}
                 break;
             }
@@ -323,11 +332,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 noVisibility();
                 break;
             }
+            case R.id.galleryButton:{
+                pickFromGallery();
+
+                break;
+            }
 
         }
     }
 
+    private void pickFromGallery(){
+        //Create an Intent with action as ACTION_PICK
+        Intent intent=new Intent(Intent.ACTION_PICK);
+        // Sets the type as image/*. This ensures only components of type image are selected
+        intent.setType("image/*");
+        //We pass an extra array with the accepted mime types. This will ensure only components with these MIME types as targeted.
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
+        // Launching the Intent
+        startActivityForResult(intent,REQUEST_CODE);
+    }
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK) {
+            Uri photoUri = data.getData();
+            if (photoUri != null) {
+                try {
+                    currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                    paintView.setBackgroundImg(currentImage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -442,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 paintView.blur();
                 return true;
             case R.id.action_style:
-                paintView.setStyle();
+                paintView.setFill();
                 return true;
         }
 
