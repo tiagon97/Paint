@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
-    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery;
+    ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery,colour,pen_size;
+    TextView text;
     boolean visibility=false;
     String[] style = {"Zwykly", "Blur", "Emboss"};
     ArrayAdapter<String> adapter;
@@ -50,31 +51,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         getSupportActionBar().hide();
-        Button button;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         paintView = findViewById(R.id.paintView);
-        button = findViewById(R.id.change_color_button);
+        pen_size = findViewById(R.id.pensizeButton);
+        text = findViewById(R.id.current_pen_size);
+        text.setVisibility(View.GONE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        SeekBar seekBar = findViewById(R.id.seekBar);
+        final SeekBar seekBar = findViewById(R.id.seekBar);
         final TextView textView = findViewById(R.id.current_pen_size);
+        seekBar.setVisibility(View.GONE);
 
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         paintView.initialise(displayMetrics);
         if(seekBar.getProgress() == 0){seekBarProgress=1; }else{seekBarProgress=seekBar.getProgress();}
-        textView.setText("Rozmiar: " + seekBarProgress);
-
-        button.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                openColourPicker();
-
-            }
-
-        });
+        textView.setText("" + seekBarProgress);
 
 
         sp = findViewById(R.id.spinner);
@@ -87,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         hideUI();
-
+                        seekBar.setVisibility(View.GONE);
+                        text.setVisibility(View.GONE);
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
@@ -98,6 +91,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
+
+        pen_size.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                if (seekBar.getVisibility() == View.VISIBLE) {
+                    seekBar.setVisibility(View.INVISIBLE);
+                    text.setVisibility(View.INVISIBLE);
+
+                } else {
+                    seekBar.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN: {
+                        seekBar.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        seekBar.setVisibility(View.GONE);
+                        text.setVisibility(View.GONE);
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+
+
 
 
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -130,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(seekBar.getProgress()==0){seekBarProgress=1;}else{seekBarProgress=seekBar.getProgress();}
                 paintView.setStrokeWidth(seekBarProgress);
-                textView.setText("Rozmiar: " + seekBarProgress);
+                textView.setText("" + seekBarProgress);
 
             }
 
@@ -153,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+
         viewBrushOption = findViewById(R.id.viewBrushOption);
         brush=findViewById(R.id.brush_btn);
         line=findViewById(R.id.line_btn);
@@ -164,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         undo=findViewById(R.id.UndoButton);
         clear=findViewById(R.id.ClearButton);
         gallery=findViewById(R.id.galleryButton);
+        colour = findViewById(R.id.change_color_button);
         View viewVisibility=findViewById(R.id.paintView);
         viewVisibility.setOnClickListener(this);
     }
@@ -177,6 +207,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sp.setVisibility(View.GONE);
         clear.setVisibility(View.GONE);
         gallery.setVisibility(View.GONE);
+        colour.setVisibility(View.GONE);
+        pen_size.setVisibility(View.GONE);
     }
 
     public void showUI()
@@ -188,6 +220,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sp.setVisibility(View.VISIBLE);
         clear.setVisibility(View.VISIBLE);
         gallery.setVisibility(View.VISIBLE);
+        colour.setVisibility(View.VISIBLE);
+        pen_size.setVisibility(View.VISIBLE);
     }
 
 
@@ -334,7 +368,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.galleryButton:{
                 pickFromGallery();
-
+                break;
+            }
+            case R.id.change_color_button:{
+                openColourPicker();
                 break;
             }
 
