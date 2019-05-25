@@ -1,12 +1,15 @@
 package com.example.paint;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.Image;
 import android.net.Uri;
@@ -28,10 +31,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -44,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int width,height;
     ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery,colour,pen_size;
     TextView text;
+
     boolean visibility=false;
     String[] style = {"Zwykly", "Blur", "Emboss"};
     ArrayAdapter<String> adapter;
@@ -85,6 +95,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, style);
         sp.setAdapter(adapter);
 
+
+        final ImageView fabIconNew = new ImageView(this);
+        fabIconNew.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle_menu));
+        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(this)
+                .setContentView(fabIconNew)
+                .setPosition(FloatingActionButton.POSITION_BOTTOM_RIGHT)
+                .build();
+
+
+
+        final SubActionButton.Builder rLSubBuilder = new SubActionButton.Builder(this);
+        final ImageView menuOption1 = new ImageView(this);
+        final ImageView menuOption2 = new ImageView(this);
+        final ImageView menuOption3 = new ImageView(this);
+
+
+
+        menuOption1.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.gallery));
+        menuOption2.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.action_save));
+        menuOption3.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.action_share));
+
+
+
+
+        final FloatingActionMenu rightLowerMenu = new FloatingActionMenu.Builder(this)
+                .addSubActionView(rLSubBuilder.setContentView(menuOption1).build())
+                .addSubActionView(rLSubBuilder.setContentView(menuOption2).build())
+                .addSubActionView(rLSubBuilder.setContentView(menuOption3).build())
+                .attachTo(rightLowerButton)
+                .build();
+
+
+
+        rightLowerMenu.setStateChangeListener(new FloatingActionMenu.MenuStateChangeListener() {
+            @Override
+            public void onMenuOpened(FloatingActionMenu menu) {
+                fabIconNew.setRotation(0);
+                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
+                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
+                animation.start();
+            }
+
+            @Override
+            public void onMenuClosed(FloatingActionMenu menu) {
+                fabIconNew.setRotation(45);
+                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
+                animation.start();
+            }
+        });
+
+        menuOption1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        menuOption2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        menuOption3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         paintView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -93,10 +178,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hideUI();
                         seekBar.setVisibility(View.GONE);
                         text.setVisibility(View.GONE);
+                        rightLowerButton.setVisibility(View.GONE);
+                        rightLowerMenu.close(true);
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
                         showUI();
+                        rightLowerButton.setVisibility(View.VISIBLE);
                         break;
                     }
                 }
@@ -221,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gallery.setVisibility(View.GONE);
         colour.setVisibility(View.GONE);
         pen_size.setVisibility(View.GONE);
+
     }
 
     public void showUI()
