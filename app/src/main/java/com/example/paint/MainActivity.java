@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuOption1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+                pickFromGallery();
 
             }
         });
@@ -157,7 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuOption2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                    requestStoragePermission();
+
+                }
+                paintView.saveImage();
             }
         });
 
@@ -165,8 +170,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+
             }
         });
+
 
 
 
@@ -599,62 +606,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-
-            case R.id.clear_button:
-                paintView.clear();
-                return true;
-            case R.id.save_button:
-
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                    requestStoragePermission();
-
-                }
-                paintView.saveImage();
-                return true;
-
-            case R.id.undo_button:
-                paintView.undo();
-                return true;
-            case R.id.redo_button:
-                paintView.redo();
-                return true;
-            case R.id.brush_button:
-                paintView.drawOption.setBrush_active();
-                return true;
-            case R.id.action_line:
-                paintView.drawOption.setLine_active();
-                return true;
-            case R.id.action_rect:
-                paintView.drawOption.setRect_active();
-                return true;
-            case R.id.action_square:
-                paintView.drawOption.setSquare_active();
-                return true;
-            case R.id.action_circle:
-                paintView.drawOption.setCircle_active();
-                return true;
-            case R.id.Styl1:
-                paintView.normal();
-                return true;
-            case R.id.Styl2:
-                paintView.emboss();
-                return true;
-            case R.id.Styl3:
-                paintView.blur();
-                return true;
-            case R.id.action_style:
-                paintView.setFill();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-
-    }
 
     private void openColourPicker () {
 
