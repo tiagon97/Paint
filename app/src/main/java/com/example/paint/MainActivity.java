@@ -30,6 +30,7 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -162,7 +163,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     requestStoragePermission();
 
                 }
-                paintView.saveImage();
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_save,null);
+                final EditText eSave = mView.findViewById(R.id.zapiszA);
+                Button bZapis = mView.findViewById(R.id.btZapis);
+                Button bAnuluj = mView.findViewById(R.id.btAnuluj);
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                bZapis.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!eSave.getText().toString().isEmpty())
+                            paintView.saveImage(eSave.getText().toString());
+                            dialog.dismiss();
+                    }
+                });
+
+                bAnuluj.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
+
+
+                //paintView.saveImage();
             }
         });
 

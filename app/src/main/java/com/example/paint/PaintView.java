@@ -421,7 +421,7 @@ public class PaintView extends View {
 
 
 
-    public void saveImage () {
+    public void saveImage (String nazwa) {
 
         int count = 0;
 
@@ -450,7 +450,7 @@ public class PaintView extends View {
 
         if (subDirectory.exists()) {
 
-            File image = new File(subDirectory, "/drawing_" + (count + 1) + ".png");
+            File image = new File(subDirectory, nazwa + ".png");
             FileOutputStream fileOutputStream;
 
             try {
