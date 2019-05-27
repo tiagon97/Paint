@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
+    boolean fill=false;
     int width,height;
     ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery,colour,pen_size;
     TextView text;
@@ -210,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
+                        if(paintView.fill!=fill) {
+                            paintView.setFill();
+                        }
                         hideUI();
                         seekBar.setVisibility(View.GONE);
                         text.setVisibility(View.GONE);
@@ -455,12 +459,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.fillButton:{
                 if(paintView.drawOption.getDrawOpt()!="BRUSH"){
-                if(paintView.fill){
+                if(fill){
                     fillbtn.setImageResource(R.drawable.no_fill);
-                    paintView.setFill();
+                    fill=false;
                 }else{
                     fillbtn.setImageResource(R.drawable.fill);
-                    paintView.setFill();
+                    fill=true;
                 }}
                 break;
             }
