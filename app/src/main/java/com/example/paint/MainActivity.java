@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +44,8 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
+import java.io.File;
+
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int defaultColor;
     private int STORAGE_PERMISSION_CODE = 1;
     private int seekBarProgress=0;
+    private static Context context;
     boolean fill=false;
     int width,height;
     ImageButton viewBrushOption,brush,line,rect,square,circle,fillbtn,redo, undo, clear,gallery,colour,pen_size;
@@ -85,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final TextView textView = findViewById(R.id.current_pen_size);
         seekBar.setVisibility(View.GONE);
         paintView.getViewTreeObserver().addOnGlobalLayoutListener(new MyGlobalListenerClass());
-
+        context=MainActivity.this;
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         paintView.initialise(displayMetrics);
@@ -199,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+                shareDrawing();
 
             }
         });
@@ -336,7 +342,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View viewVisibility=findViewById(R.id.paintView);
         viewVisibility.setOnClickListener(this);
     }
+    private void shareDrawing () {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        File sharefile=paintView.getImage();
+        if(sharefile.exists()!=false){
+        Uri uri = FileProvider.getUriForFile(
+                context,
+                MainActivity.this.getApplicationContext().getPackageName() +
+                        ".provider", sharefile);
 
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+                .setType("image/png");
+
+        startActivity(Intent.createChooser(intent, "Share image via"));}else{
+
+        }
+    }
     public void hideUI()
     {
         viewBrushOption.setVisibility(View.GONE);

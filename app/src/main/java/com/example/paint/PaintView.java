@@ -46,6 +46,7 @@ public class PaintView extends View {
     private MaskFilter mEmboss;
     private MaskFilter mBlur;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private String requestedFunction;
     DrawOption drawOption;
     public boolean isTouch;
     public boolean bgImage=false;
@@ -98,6 +99,13 @@ public class PaintView extends View {
         strokeWidth = BRUSH_SIZE;
         drawOption=new DrawOption();
 
+    }
+    public void setRequestedFunction(String newFunction) {
+        requestedFunction = newFunction;
+    }
+
+    public String getRequestedFunction() {
+        return requestedFunction;
     }
 
     @Override
@@ -504,5 +512,23 @@ public class PaintView extends View {
 
         }
     }
+    public File getImage () {
+        File sdCardDirectory = Environment.getExternalStorageDirectory();
+        File subDirectory = new File(sdCardDirectory.toString() + "/Pictures/Paint");
+        File image = new File(subDirectory, "/shared_" + "abc" + ".png");
+        FileOutputStream fileOutputStream;
 
+        try{
+            fileOutputStream = new FileOutputStream(image);
+            mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            Toast.makeText(getContext(), "Could not share the image.", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Could not share the image.", Toast.LENGTH_LONG).show();
+        }
+        return image;
+    }
 }
