@@ -369,6 +369,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gallery.setVisibility(View.GONE);
         colour.setVisibility(View.GONE);
         pen_size.setVisibility(View.GONE);
+        brush.setVisibility(View.GONE);
+        line.setVisibility(View.GONE);
+        rect.setVisibility(View.GONE);
+        square.setVisibility(View.GONE);
+        circle.setVisibility(View.GONE);
 
     }
 
@@ -699,7 +704,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onOk(AmbilWarnaDialog dialog, int color) {
 
                 defaultColor = color;
-
                 paintView.setColor(color);
 
             }
