@@ -88,7 +88,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="onClick"
-        android:src="@drawable/gallery"
+        android:src="@drawable/power"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.164"

@@ -528,7 +528,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.galleryButton:{
-                pickFromGallery();
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                builder1.setTitle("Czy na pewno chcesz zamknąć aplikacje?")
+                        .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                exit();
+                            }
+                        })
+                        .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
+
                 break;
             }
             case R.id.change_color_button:{
@@ -601,6 +617,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuInflater.inflate(R.menu.main, menu);
 
         return super.onCreateOptionsMenu(menu);
+
+    }
+
+    public void exit(){
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
 
     }
 
