@@ -203,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuOption3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
                 shareDrawing();
 
             }
